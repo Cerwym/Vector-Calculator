@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A457748169C809100C4DA19 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A457747169C809100C4DA19 /* main.c */; };
-		1A45774A169C809100C4DA19 /* _901632VectorCalc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 1A457749169C809100C4DA19 /* _901632VectorCalc.1 */; };
+		1A457756169C825C00C4DA19 /* Task6.y in Sources */ = {isa = PBXBuildFile; fileRef = 1A457755169C825C00C4DA19 /* Task6.y */; };
+		1A457758169C826400C4DA19 /* Task6.l in Sources */ = {isa = PBXBuildFile; fileRef = 1A457757169C826400C4DA19 /* Task6.l */; };
+		1A45775B169C827C00C4DA19 /* SymbolTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A45775A169C827C00C4DA19 /* SymbolTable.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,7 +19,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				1A45774A169C809100C4DA19 /* _901632VectorCalc.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -26,8 +26,12 @@
 
 /* Begin PBXFileReference section */
 		1A457743169C809100C4DA19 /* 0901632VectorCalc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = 0901632VectorCalc; sourceTree = BUILT_PRODUCTS_DIR; };
-		1A457747169C809100C4DA19 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		1A457749169C809100C4DA19 /* _901632VectorCalc.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = _901632VectorCalc.1; sourceTree = "<group>"; };
+		1A457753169C823000C4DA19 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Vector.h; sourceTree = "<group>"; };
+		1A457755169C825C00C4DA19 /* Task6.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; lineEnding = 0; path = Task6.y; sourceTree = "<group>"; };
+		1A457757169C826400C4DA19 /* Task6.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; lineEnding = 0; path = Task6.l; sourceTree = "<group>"; };
+		1A457759169C826E00C4DA19 /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SymbolTable.h; sourceTree = "<group>"; };
+		1A45775A169C827C00C4DA19 /* SymbolTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = SymbolTable.c; sourceTree = "<group>"; };
+		1A45775E169DA04D00C4DA19 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,10 +48,12 @@
 		1A457738169C809100C4DA19 = {
 			isa = PBXGroup;
 			children = (
+				1A45775E169DA04D00C4DA19 /* Cocoa.framework */,
 				1A457746169C809100C4DA19 /* 0901632VectorCalc */,
 				1A457744169C809100C4DA19 /* Products */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 1;
 		};
 		1A457744169C809100C4DA19 /* Products */ = {
 			isa = PBXGroup;
@@ -60,10 +66,29 @@
 		1A457746169C809100C4DA19 /* 0901632VectorCalc */ = {
 			isa = PBXGroup;
 			children = (
-				1A457747169C809100C4DA19 /* main.c */,
-				1A457749169C809100C4DA19 /* _901632VectorCalc.1 */,
+				1A457757169C826400C4DA19 /* Task6.l */,
+				1A457755169C825C00C4DA19 /* Task6.y */,
+				1A457752169C815000C4DA19 /* Implementation */,
+				1A457750169C813600C4DA19 /* Headers */,
 			);
 			path = 0901632VectorCalc;
+			sourceTree = "<group>";
+		};
+		1A457750169C813600C4DA19 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				1A457759169C826E00C4DA19 /* SymbolTable.h */,
+				1A457753169C823000C4DA19 /* Vector.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		1A457752169C815000C4DA19 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				1A45775A169C827C00C4DA19 /* SymbolTable.c */,
+			);
+			name = Implementation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,7 +142,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1A457748169C809100C4DA19 /* main.c in Sources */,
+				1A45775B169C827C00C4DA19 /* SymbolTable.c in Sources */,
+				1A457756169C825C00C4DA19 /* Task6.y in Sources */,
+				1A457758169C826400C4DA19 /* Task6.l in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,14 +207,42 @@
 		1A45774E169C809100C4DA19 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				YACC_GENERATE_DEBUGGING_DIRECTIVES = YES;
 			};
 			name = Debug;
 		};
 		1A45774F169C809100C4DA19 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = NO;
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				YACC_GENERATE_DEBUGGING_DIRECTIVES = YES;
 			};
 			name = Release;
 		};
