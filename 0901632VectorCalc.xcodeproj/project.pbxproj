@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A457756169C825C00C4DA19 /* Task6.y in Sources */ = {isa = PBXBuildFile; fileRef = 1A457755169C825C00C4DA19 /* Task6.y */; };
-		1A457758169C826400C4DA19 /* Task6.l in Sources */ = {isa = PBXBuildFile; fileRef = 1A457757169C826400C4DA19 /* Task6.l */; };
+		1A457756169C825C00C4DA19 /* Calc.y in Sources */ = {isa = PBXBuildFile; fileRef = 1A457755169C825C00C4DA19 /* Calc.y */; };
+		1A457758169C826400C4DA19 /* Calc.l in Sources */ = {isa = PBXBuildFile; fileRef = 1A457757169C826400C4DA19 /* Calc.l */; };
 		1A45775B169C827C00C4DA19 /* SymbolTable.c in Sources */ = {isa = PBXBuildFile; fileRef = 1A45775A169C827C00C4DA19 /* SymbolTable.c */; };
 /* End PBXBuildFile section */
 
@@ -27,8 +27,8 @@
 /* Begin PBXFileReference section */
 		1A457743169C809100C4DA19 /* 0901632VectorCalc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = 0901632VectorCalc; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A457753169C823000C4DA19 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Vector.h; sourceTree = "<group>"; };
-		1A457755169C825C00C4DA19 /* Task6.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; lineEnding = 0; path = Task6.y; sourceTree = "<group>"; };
-		1A457757169C826400C4DA19 /* Task6.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; lineEnding = 0; path = Task6.l; sourceTree = "<group>"; };
+		1A457755169C825C00C4DA19 /* Calc.y */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; lineEnding = 0; path = Calc.y; sourceTree = "<group>"; };
+		1A457757169C826400C4DA19 /* Calc.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; lineEnding = 0; path = Calc.l; sourceTree = "<group>"; };
 		1A457759169C826E00C4DA19 /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SymbolTable.h; sourceTree = "<group>"; };
 		1A45775A169C827C00C4DA19 /* SymbolTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = SymbolTable.c; sourceTree = "<group>"; };
 		1A45775E169DA04D00C4DA19 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -66,8 +66,8 @@
 		1A457746169C809100C4DA19 /* 0901632VectorCalc */ = {
 			isa = PBXGroup;
 			children = (
-				1A457757169C826400C4DA19 /* Task6.l */,
-				1A457755169C825C00C4DA19 /* Task6.y */,
+				1A457757169C826400C4DA19 /* Calc.l */,
+				1A457755169C825C00C4DA19 /* Calc.y */,
 				1A457752169C815000C4DA19 /* Implementation */,
 				1A457750169C813600C4DA19 /* Headers */,
 			);
@@ -143,8 +143,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A45775B169C827C00C4DA19 /* SymbolTable.c in Sources */,
-				1A457756169C825C00C4DA19 /* Task6.y in Sources */,
-				1A457758169C826400C4DA19 /* Task6.l in Sources */,
+				1A457756169C825C00C4DA19 /* Calc.y in Sources */,
+				1A457758169C826400C4DA19 /* Calc.l in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +265,7 @@
 				1A45774F169C809100C4DA19 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
