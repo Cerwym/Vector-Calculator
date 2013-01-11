@@ -1,5 +1,13 @@
+//
+//  SymbolTable.c
+//  0901632VectorCalc
+//
+//  Created by Peter Lockett on 11/01/2013.
+//  Copyright (c) 2013 Peter Lockett. All rights reserved.
+//
 #include <stdlib.h>
 #include "SymbolTable.h"
+#include <string.h>
 
 // The most recent entry in the symbol table
 symbolEntry *symbolTable = NULL;
@@ -32,25 +40,44 @@ symbolEntry* addId (char *id)
 }
 
 // Returns the value of the specified identifier
-int getValue (char *id, struct Vector3f *v) 
+enum symbolType getValue (char *id, union symbolValue *v)
 {
 	symbolEntry *entry = findEntry (id); // Look for identifier in symbol table
 	if (entry == NULL) return 0;	// Identifier not found return 0 for false
-	v->x = entry->value->x;			// Set values
-	v->y = entry->value->y;
-	v->z = entry->value->z;
-	return 1;						// Return 1 for true
+	if (entry->type == SYMBOL_VECTOR)
+	{
+		v->vector.x = entry->value->vector.x;			// Set values
+		v->vector.y = entry->value->vector.y;
+		v->vector.z = entry->value->vector.z;
+		
+		return SYMBOL_VECTOR;
+	}
+	
+	if (entry->type == SYMBOL_SCALAR)
+	{
+		v->scalarnum = entry->value->scalarnum;
+		
+		return SYMBOL_SCALAR;
+	}
+	
+	return SYMBOL_UNDECLARED;						// Return 1 for true
 }
 
 // Sets the value of the specified identifier to the specified value
-void setValue (char *id, struct Vector3f *v) 
+void setValue (char *id, union symbolValue v, enum symbolType type)
 {
 	symbolEntry *entry = findEntry (id); // Look for the specified identifier
 	if (entry == NULL)		// If it wasnt found
 	{
 		entry = addId(id);	// Create it
 	}
-	entry->value->x = v->x; // Set the values
-	entry->value->y = v->y;
-	entry->value->z = v->z;
+	entry->type = type;
+	if (type == SYMBOL_SCALAR)
+	{
+		entry->value->scalarnum = v.scalarnum;
+	}
+	else if (type == SYMBOL_VECTOR)
+	{
+		entry->value->vector = v.vector;
+	}
 }
