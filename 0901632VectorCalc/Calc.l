@@ -1,9 +1,16 @@
-
+/*
+//  Calc.l
+//  0901632VectorCalc
+//
+//  Created by Peter Lockett on 11/01/2013.
+//  Copyright (c) 2013 Peter Lockett. All rights reserved.
+*/
 digit [0-9]
 letter [a-zA-Z]
 
 %{
 	#include <stdio.h>
+	#include "SymbolTable.h"
 	#include "y.tab.h"
 
 	void yyerror (char const*);
@@ -35,7 +42,9 @@ letter [a-zA-Z]
 						}
 	
 	/* Needed for calculations and vector parsing */
-[,+-=*]					{	return *yytext;	}
+[,+-=*^]				{
+							return *yytext;
+						}
 
 	/* Ignore white space and tabs */
 [ \t]	;

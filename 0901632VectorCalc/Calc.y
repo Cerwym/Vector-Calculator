@@ -1,21 +1,26 @@
+//
+//  Calc.y
+//  0901632VectorCalc
+//
+//  Created by Peter Lockett on 11/01/2013.
+//  Copyright (c) 2013 Peter Lockett. All rights reserved.
+//
 %{
 #include <stdio.h>
-#include "SymbolTable.h"
+#include <string.h>
 #include "Vector.h"
+#include "SymbolTable.h"
 
 int yylex ();
 void yyerror (char const*);
 
-// Prototypes for calculation functions
-struct Vector3f* VectorAdd(struct Vector3f *vec1, struct Vector3f *vec2);
-struct Vector3f* VectorSubtract(struct Vector3f *vec1, struct Vector3f *vec2);
-struct Vector3f* ScalarMultiply(struct Vector3f *vec, double number);
+struct Vector3 VectorCalculation(struct Vector3 v1, struct Vector3 v2, int flag, double num);
 %}
 
 %union
 {
 	double number;
-	struct Vector3f *vector3;
+	union symbolValue value;
 	char* string;
 }
 
@@ -30,12 +35,14 @@ struct Vector3f* ScalarMultiply(struct Vector3f *vec, double number);
 
 // Productions that return a value
 %type <number> inNum
-%type <vector3> vector
-%type <vector3> calculation
+%type <number> scalar
+%type <value> vector
+%type <value> calculation
 
 // Production evaluation precadence
 %left '-' '+'
 %left '*'
+%left '^'
 
 %%
 
@@ -48,56 +55,56 @@ input :
 expression :
 	// A single calculation
 	calculation NEWLINE 
-		{ 
-			if($1 == 0)
-			{
-				// Calculation returned an error
-				printf("error: Don't know what to do\n");
-			}
-			else
-			{
-				// Calculation returned ok so set the value of result
-				setValue("result", $1); 
-			}
-		}
+	{
+		// Calculation returned ok so set the value of result
+		setValue("result", $1, SYMBOL_VECTOR);
+	}
 	// Displaying an identifier
 	| DISPLAY IDENTIFIER NEWLINE 
-		{ 
-			struct Vector3f *vec = malloc(sizeof(*vec));
+		{
+			union symbolValue value;
 			// If we got the value of the identifier
-			if(getValue($2, vec))
-				printf(" = (%g, %g, %g)\n", vec->x, vec->y, vec->z);
+			enum symbolType type = getValue($2, &value);
+			if (type == SYMBOL_VECTOR)
+			{
+				printf(" = (%g, %g, %g)\n", value.vector.x, value.vector.y, value.vector.z);
+			}
+			if (type == SYMBOL_SCALAR)
+			{
+				printf("Scalar value is %f", value.scalarnum);
+			}
 			else
 				printf("error: Couldn't find %s\n", $2);
 		}
 	// Setting an identifier to a calculation (which could be an identifier or user entered vector)
 	| IDENTIFIER '=' calculation NEWLINE
-		{ 		
-			// If calculation didnt return an error
-			if($3 != 0)
+		{
+			// If we are trying to set the keyword result
+			if(!strcmp($1, "result"))
 			{
-				// If we are trying to set the keyword result
-				if(!strcmp($1, "result"))
-				{
-					printf("error: result is a keyword and can't be assigned\n");
-				}
-				else
-				{
-					// Set the value and output what it was set to
-					setValue($1, $3);
-					printf("%s is now (%g, %g, %g)\n", $1, $3->x, $3->y, $3->z);
-				}
+				printf("error: result is a keyword and can't be assigned\n");
 			}
+			else
+			{
+				union symbolValue v;
+				v.vector = $3.vector;
+				// Set the value and output what it was set to
+				setValue($1, v, SYMBOL_VECTOR);
+				printf("%s is now (%g, %g, %g)\n", $1, $3.vector.x, $3.vector.y, $3.vector.z);
+			}
+		}
+	| IDENTIFIER '=' inNum NEWLINE
+		{
+			union symbolValue v;
+			v.scalarnum = $3;
+			setValue($1, v, SYMBOL_SCALAR);
+			printf(" = %f\n", $3);
+	
 		}
 	// Handle user only entering an integer or floating point number
 	| NUM NEWLINE 
 		{
 			printf("Please enter a vector\n");
-		}		
-	// Handle trying to set a vector to an integer or floating point number
-	| IDENTIFIER '=' NUM NEWLINE
-		{ 		
-			printf("error: Variable must be set to a vector\n");
 		}
 	// Handle trying to set the keyword display
 	| DISPLAY '=' calculation NEWLINE
@@ -112,64 +119,82 @@ expression :
 	;
 
 calculation :
-	// Can be just a vector for recursion
-	vector { $$ = $1; }
-	// Scalar multiplication with vector first
-	| calculation '*' inNum 
-		{ 
-			if($1 == 0) { $$ = 0; }
-			else { $$ = ScalarMultiply($1, $3); }
+	// To allow for recursion, a calculation can also be a vector
+	vector
+	{
+		$$ = $1;
+	}
+	// Perform a scalar multiplication with the vector first
+	| calculation '*' scalar
+		{
+			struct Vector3 temp;
+			$$.vector = VectorCalculation($1.vector, temp, 3, $3);
+			
 		}
-	// Scalar multiplication with scalar value first
-	| inNum '*' calculation 
-		{ 
-			if($3 == 0) { $$ = 0; }
-			else { $$ = ScalarMultiply($3, $1); }
+	// Perform a scalar multiplication with the scalar value first
+	| scalar '*' calculation
+	{
+		struct Vector3 temp;
+				$$.vector = VectorCalculation($3.vector, temp, 3, $1);
+			
 		}
-	// Vector addition
+	// perform an addition of 2 vectors
 	| calculation '+' calculation 
-		{ 
-			if($1 == 0 || $3 == 0) { $$ = 0; }
-			else { $$ = VectorAdd($1, $3);}
+		{
+				$$.vector = VectorCalculation($1.vector, $3.vector, 1, 0);
+			
 		}
-	// Vector subtraction
+	// perform a subtraction of 2 vectors
 	| calculation '-' calculation 
 		{ 
-			if($1 == 0 || $3 == 0) { $$ = 0; }
-			else { $$ = VectorSubtract($1, $3); }
+				$$.vector = VectorCalculation($1.vector, $3.vector, 2, 0);
+			
+		}
+	// perform a cross product multiplication on two vectors
+	| calculation '^' calculation
+		{
+				$$.vector = VectorCalculation($1.vector, $3.vector, 4, 0);
 		}
 	;
 
-vector :
-	// Vector surrounded with parenthesis
-	OPENCLOSE inNum ',' inNum ',' inNum OPENCLOSE 
+scalar :
+		inNum
 		{
-			struct Vector3f *vec = malloc(sizeof(*vec));
-			vec->x = $2;
-			vec->y = $4;
-			vec->z = $6;
-			$$ = vec;
+			$$ = $1;
 		}
-	// Vector without parenthesis
-	| inNum ',' inNum ',' inNum 
+	|	IDENTIFIER
 		{
-			struct Vector3f *vec = malloc(sizeof(*vec));
-			vec->x = $1;
-			vec->y = $3;
-			vec->z = $5;
-			$$ = vec;
-		}
-	| IDENTIFIER 
-		{
-			struct Vector3f *vec = malloc(sizeof(*vec));
-			if(getValue($1, vec))
+			union symbolValue value;
+			enum symbolType type = getValue($1, &value);
+	
+			if(type == SYMBOL_SCALAR)
 			{
-				$$ = vec;
+				$$ = value.scalarnum;
 			}
 			else
 			{
-				$$ = 0;
-				printf("Couldn't find %s\n", $1);
+				printf("type mismatch, variable is not a scalar");
+			}
+		}
+
+vector :
+	// Vector surrounded with parenthesis e.g peter = (1,1,1)
+	OPENCLOSE inNum ',' inNum ',' inNum OPENCLOSE 
+		{
+			struct Vector3 *vec = malloc(sizeof(*vec));
+			vec->x = $2;
+			vec->y = $4;
+			vec->z = $6;
+			$$.vector = *vec; // Changed this
+		}
+	| IDENTIFIER 
+		{
+			union symbolValue value;
+			enum symbolType type = getValue($1, &value);
+			
+			if(type == SYMBOL_VECTOR)
+			{
+				$$.vector = value.vector;
 			}
 		}
 	;
@@ -193,38 +218,48 @@ void yyerror (char const *msg)
 	printf ("%s \n", msg);
 }
 
-// Adds 2 vectors together, outputs, then returns the result
-struct Vector3f* VectorAdd(struct Vector3f *vec1, struct Vector3f *vec2)
+// One function to do addition, subtraction and scalar multiplication. Could possibly have moved to C++ to enable function templates.
+struct Vector3 VectorCalculation(struct Vector3 v1, struct Vector3 v2, int flag, double num)
 {
-	struct Vector3f *result = malloc(sizeof(*result));
-	printf("\t(%g, %g, %g) + (%g, %g, %g)\n", vec1->x, vec1->y, vec1->z, vec2->x, vec2->y, vec2->z);
-	result->x = vec1->x+vec2->x;
-	result->y = vec1->y+vec2->y;
-	result->z = vec1->z+vec2->z;
-	printf("\t= (%g, %g, %g)\n", result->x, result->y, result->z);
-	return result;
-}
-
-// subtracts 2 vectors, outputs, then returns the result
-struct Vector3f* VectorSubtract(struct Vector3f *vec1, struct Vector3f *vec2)
-{
-	struct Vector3f *result = malloc(sizeof(*result));
-	printf("\t(%g, %g, %g) - (%g, %g, %g)\n", vec1->x, vec1->y, vec1->z, vec2->x, vec2->y, vec2->z);
-	result->x = vec1->x-vec2->x;
-	result->y = vec1->y-vec2->y;
-	result->z = vec1->z-vec2->z;
-	printf("\t= (%g, %g, %g)\n", result->x, result->y, result->z);
-	return result;
-}
-
-// Performs scalar multiplication, outputs, then returns the result
-struct Vector3f* ScalarMultiply(struct Vector3f *vec, double number)
-{
-	struct Vector3f *result = malloc(sizeof(*result));
-	printf("\t(%g, %g, %g) * %g\n", vec->x, vec->y, vec->z, number);
-	result->x = vec->x*number;
-	result->y = vec->y*number;
-	result->z = vec->z*number;
-	printf("\t= (%g, %g, %g)\n", result->x, result->y, result->z);
+	struct Vector3 result;
+	// 1 - Addition, 2 - Subtraction, 3 - Scalar Multiplication, 4 - Cross Product
+	if (flag == 1)
+	{
+		// Addition, adds v(ector)'s 1 and 2 together
+		printf("\t(%g, %g, %g) + (%g, %g, %g)\n", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+		result.x = v1.x + v2.x;
+		result.y = v1.y + v2.y;
+		result.z = v1.z + v2.z;
+		printf("\t= (%g, %g, %g)\n", result.x, result.y, result.z);
+	}
+	if (flag == 2)
+	{
+		// Subtraction, subtracts v(ector)'s 1 and two
+		printf("\t(%g, %g, %g) - (%g, %g, %g)\n", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+		result.x = v1.x - v2.x;
+		result.y = v1.y - v2.y;
+		result.z = v1.z - v2.z;
+		printf("\t= (%g, %g, %g)\n", result.x, result.y, result.z);
+	}
+	
+	if (flag == 3)
+	{
+		// Scalar Multiplcation, multiples each element in the vector by the parameter num
+		printf("\t(%g, %g, %g) * %g\n", v1.x, v1.y, v1.z, num);
+		result.x = v1.x * num;
+		result.y = v1.y * num;
+		result.z = v1.z * num;
+		printf("\t= (%g, %g, %g)\n", result.x, result.y, result.z);
+	}
+	
+	if (flag == 4)
+	{
+		// Cross product multiplcation
+		printf("\t(%g, %g, %g) X (%g, %g, %g)\n", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+		result.x = ((v1.y * v2.z) - (v1.z * v2.y));
+		result.y = ((v1.z * v2.x) - (v1.x * v2.z));
+		result.z = ((v1.x * v2.y) - (v1.y * v2.x));
+		printf("\t= (%g, %g, %g)\n", result.x, result.y, result.z);
+	}
 	return result;
 }
